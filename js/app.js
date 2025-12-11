@@ -14,19 +14,27 @@ const App = {
 
     init() {
         console.log('CD-App Dashboard initializing...');
+        console.log('ProductionData available:', typeof ProductionData !== 'undefined');
+        console.log('MaterialData available:', typeof MaterialData !== 'undefined');
         try {
             this.setupNavigation();
             console.log('Navigation setup done');
-            this.refreshData();
-            console.log('Data refreshed');
-            this.setupAreaTabs();
-            this.setupMaterialTabs();
-            this.setupSearch();
-            this.setupModal();
-            this.setupFilters();
+            if (typeof ProductionData !== 'undefined' && typeof MaterialData !== 'undefined') {
+                this.refreshData();
+                console.log('Data refreshed');
+                this.setupAreaTabs();
+                this.setupMaterialTabs();
+                this.setupSearch();
+                this.setupModal();
+                this.setupFilters();
+            } else {
+                console.error('Data modules not loaded!');
+            }
             this.updateClock();
             setInterval(() => this.updateClock(), 1000);
-            this.updateInterval = setInterval(() => this.refreshData(), 30000);
+            if (typeof ProductionData !== 'undefined') {
+                this.updateInterval = setInterval(() => this.refreshData(), 30000);
+            }
             console.log('CD-App Dashboard ready!');
         } catch (e) {
             console.error('Init error:', e);
