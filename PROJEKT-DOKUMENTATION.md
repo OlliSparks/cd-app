@@ -1,8 +1,8 @@
-# OPTIMIZE YOURSELF - Projekt-Dokumentation
+# OPTOMIZE YOURSELF - Projekt-Dokumentation
 
 ## Projektübersicht
 
-**Name:** OPTIMIZE YOURSELF (cd-app)
+**Name:** OPTOMIZE YOURSELF (cd-app)
 **Typ:** Progressive Web App (PWA)
 **Erstellt für:** Christian Döhl
 **Technologie:** Vanilla JavaScript, CSS3, HTML5, Service Worker
@@ -39,7 +39,7 @@ Entwicklung eines Produktions-Dashboards für die Fertigungsüberwachung mit fol
 ### Phase 2: Produktions-Dashboard (Commits 4-6)
 
 **Header-Design implementiert**
-- "OPTIMIZE YOURSELF" Branding
+- "OPTOMIZE YOURSELF" Branding
 - "powered by Christian Döhl" Subline
 - Live-Status-Anzeige mit Uhrzeit
 - "Enabling the future" Tagline
@@ -284,7 +284,7 @@ MAT-CLEAN-ACET   Aceton
 | 11 | 02ff7ed | debug: Add console logging to find navigation issue |
 | 12 | ba7ee23 | fix: Navigation läuft vor Daten-Check |
 | 13 | bf9e118 | fix: Material-Ansicht Datenstruktur korrigiert |
-| 14 | f3b81dc | chore: Header zu 'OPTIMIZE YOURSELF powered by Christian Döhl' |
+| 14 | f3b81dc | chore: Header zu 'OPTOMIZE YOURSELF powered by Christian Döhl' |
 | 15 | c0fbb1c | feat: Klickbare Filter in Stats-Bars |
 | 16 | 7d868d2 | feat: Watchlist für kritische Artikel und SAP-Bestellungen |
 | 17 | b4a8ab5 | fix: Watchlist Mock-Daten werden beim ersten Laden angezeigt |
