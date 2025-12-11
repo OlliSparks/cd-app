@@ -1,15 +1,17 @@
-const CACHE_NAME = 'cd-app-v10';
+const CACHE_NAME = 'cd-app-v11';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/css/style.css',
-    '/css/dashboard.css',
-    '/css/material.css',
-    '/js/app.js',
-    '/js/data.js',
-    '/js/material-data.js',
-    '/js/watchlist.js',
-    '/manifest.json'
+    './',
+    './index.html',
+    './css/style.css',
+    './css/dashboard.css',
+    './css/material.css',
+    './js/app.js',
+    './js/data.js',
+    './js/material-data.js',
+    './js/watchlist.js',
+    './manifest.json',
+    './icons/icon-192.svg',
+    './icons/icon-512.svg'
 ];
 
 // Install - cache files
