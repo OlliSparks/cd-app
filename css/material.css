@@ -40,6 +40,23 @@
 .mat-stat.medium .mat-stat-value { color: #f1c40f; }
 .mat-stat.ok .mat-stat-value { color: #8dc63f; }
 
+/* Clickable stat filter */
+.mat-stat {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mat-stat:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.mat-stat.mat-stat-active {
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
 /* ===== CATEGORY TABS ===== */
 .material-tabs {
     display: flex;

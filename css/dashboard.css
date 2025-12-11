@@ -186,6 +186,35 @@
     letter-spacing: 0.5px;
 }
 
+/* Clickable stat filter */
+.stat-item {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item.stat-active {
+    box-shadow: 0 0 0 3px rgba(74, 124, 52, 0.5);
+    transform: translateY(-2px);
+}
+
+.stat-item.stat-active.running { box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.5); }
+.stat-item.stat-active.idle { box-shadow: 0 0 0 3px rgba(149, 165, 166, 0.5); }
+.stat-item.stat-active.setup { box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.5); }
+.stat-item.stat-active.fault { box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.5); }
+
+.no-results {
+    text-align: center;
+    padding: 40px 20px;
+    color: #7f8c8d;
+    font-size: 16px;
+    grid-column: 1 / -1;
+}
+
 /* ===== AREA TABS ===== */
 .area-tabs {
     display: flex;

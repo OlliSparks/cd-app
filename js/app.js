@@ -9,7 +9,9 @@ const App = {
     alerts: [],
     currentView: 'dashboard',
     currentArea: 'all',
+    currentStatusFilter: 'all',
     currentMaterialCategory: 'all',
+    currentRiskFilter: 'all',
     updateInterval: null,
 
     init() {
@@ -132,9 +134,24 @@ const App = {
         var state = this.productionState.state;
 
         Object.values(state).forEach(function(ws) {
+            // Area filter
             if (self.currentArea !== 'all' && ws.workstation.area !== self.currentArea) return;
+
+            // Status filter
+            if (self.currentStatusFilter !== 'all') {
+                if (self.currentStatusFilter === 'fault') {
+                    if (ws.status.id !== 'fault' && ws.status.id !== 'maintenance') return;
+                } else if (ws.status.id !== self.currentStatusFilter) {
+                    return;
+                }
+            }
+
             html += self.renderWorkstationCard(ws);
         });
+
+        if (html === '') {
+            html = '<div class="no-results">Keine Arbeitsplätze mit diesem Status</div>';
+        }
 
         grid.innerHTML = html;
 
@@ -201,6 +218,7 @@ const App = {
     },
 
     updateStats() {
+        var self = this;
         var state = this.productionState.state;
         var counts = { running: 0, idle: 0, setup: 0, fault: 0, maintenance: 0 };
 
@@ -213,6 +231,34 @@ const App = {
         document.getElementById('stat-setup').textContent = counts.setup;
         document.getElementById('stat-fault').textContent = counts.fault + counts.maintenance;
         document.getElementById('stat-orders').textContent = this.productionState.orders.length;
+
+        // Setup click handlers for stats filtering
+        document.querySelectorAll('.stats-bar .stat-item').forEach(function(item) {
+            item.style.cursor = 'pointer';
+            item.onclick = function() {
+                var filter = item.classList.contains('running') ? 'running' :
+                             item.classList.contains('idle') ? 'idle' :
+                             item.classList.contains('setup') ? 'setup' :
+                             item.classList.contains('fault') ? 'fault' : 'all';
+
+                // Toggle filter
+                if (self.currentStatusFilter === filter) {
+                    self.currentStatusFilter = 'all';
+                } else {
+                    self.currentStatusFilter = filter;
+                }
+
+                // Update active state
+                document.querySelectorAll('.stats-bar .stat-item').forEach(function(s) {
+                    s.classList.remove('stat-active');
+                });
+                if (self.currentStatusFilter !== 'all') {
+                    item.classList.add('stat-active');
+                }
+
+                self.renderDashboard();
+            };
+        });
     },
 
     updateAlertBar() {
@@ -593,6 +639,34 @@ const App = {
         if (statOk) statOk.textContent = analysis.summary.ok || 0;
         if (statDelayed) statDelayed.textContent = analysis.summary.delayedPOs || 0;
 
+        // Setup click handlers for risk filtering
+        document.querySelectorAll('.material-stats .mat-stat').forEach(function(stat) {
+            stat.style.cursor = 'pointer';
+            stat.onclick = function() {
+                var filter = stat.classList.contains('critical') ? 'critical' :
+                             stat.classList.contains('high') ? 'high' :
+                             stat.classList.contains('medium') ? 'medium' :
+                             stat.classList.contains('ok') ? 'ok' : 'all';
+
+                // Toggle filter
+                if (self.currentRiskFilter === filter) {
+                    self.currentRiskFilter = 'all';
+                } else {
+                    self.currentRiskFilter = filter;
+                }
+
+                // Update active state
+                document.querySelectorAll('.material-stats .mat-stat').forEach(function(s) {
+                    s.classList.remove('mat-stat-active');
+                });
+                if (self.currentRiskFilter !== 'all') {
+                    stat.classList.add('mat-stat-active');
+                }
+
+                self.renderMaterial();
+            };
+        });
+
         // Update category tabs with counts
         if (tabsContainer) {
             var categoryCounts = { all: items.length };
@@ -615,6 +689,16 @@ const App = {
         if (this.currentMaterialCategory !== 'all') {
             filteredItems = items.filter(function(item) {
                 return item.category === self.currentMaterialCategory;
+            });
+        }
+
+        // Filter items by risk level
+        if (this.currentRiskFilter !== 'all') {
+            filteredItems = filteredItems.filter(function(item) {
+                if (self.currentRiskFilter === 'ok') {
+                    return item.risk === 'ok' || item.risk === 'low';
+                }
+                return item.risk === self.currentRiskFilter;
             });
         }
 
