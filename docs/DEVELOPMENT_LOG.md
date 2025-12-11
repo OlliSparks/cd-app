@@ -50,71 +50,76 @@ cd-app/
 
 ---
 
-### Step 3: Design-Überarbeitung (LINOS/Excelitas Style)
+### Step 3: Design-Überarbeitung (LINOS Style - Zwischenversion)
 
-**Aufgabe:** Optische Basis und Header von https://linosoptics.excelitas.com/ übernehmen
+**Aufgabe:** Optische Basis von https://linosoptics.excelitas.com/ übernehmen
 
 **Analyse der Referenz-Website:**
 - Professionelles Corporate Design
-- Farbschema: Blau/Grau/Weiß
+- Farbschema: Blau/Grau/Weiss (erste Version)
 - Zweistufiger Header (Top-Bar + Logo-Bereich)
 - Horizontale Navigation
 - Clean, business-orientiert
 
-**Neue Farbpalette:**
-```css
---primary-blue: #0066b3;    /* Hauptfarbe */
---primary-dark: #004a82;    /* Hover-States */
---secondary-gray: #58595b;  /* Top-Bar, Footer */
---light-gray: #f5f5f5;      /* Hintergründe */
---border-gray: #d1d1d1;     /* Rahmen */
---text-dark: #333333;       /* Haupttext */
---text-light: #666666;      /* Sekundärtext */
---white: #ffffff;           /* Hintergrund */
-```
-
-**Neues Layout:**
-```
-Desktop:
-┌─────────────────────────────────────────┐
-│ [DE EN]              Home | Hilfe       │  Top Bar (grau)
-├─────────────────────────────────────────┤
-│ [CD]  CD-App                   Kontakt  │  Header (weiss)
-│       Digital Management                │
-├─────────────────────────────────────────┤
-│ Übersicht | Hinzufügen | Einstellungen  │  Navigation (blau)
-├─────────────────────────────────────────┤
-│                                         │
-│  Main Content Area                      │
-│                                         │
-├─────────────────────────────────────────┤
-│ Impressum | Datenschutz | Kontakt       │  Footer (grau)
-└─────────────────────────────────────────┘
-
-Mobil:
-┌─────────────────────────────────────────┐
-│ [CD]  CD-App                            │  Header (kompakt)
-├─────────────────────────────────────────┤
-│                                         │
-│  Main Content Area                      │
-│                                         │
-├─────────────────────────────────────────┤
-│  [Grid]    [Plus]    [Gear]             │  Bottom Nav
-│ Übersicht  Hinzuf.   Einstell.          │
-└─────────────────────────────────────────┘
-```
-
-**Responsive Design:**
-- Desktop (>768px): Volle Navigation mit Top-Bar
-- Mobil (<=768px): Kompakter Header + Bottom-Navigation mit Icons
-
-**Geänderte/Erweiterte Dateien:**
-- `css/style.css` - Komplett neues Stylesheet (~300 Zeilen)
-- `index.html` - Neue HTML-Struktur mit allen Komponenten
-- `js/app.js` - Navigation für Desktop + Mobil
-- `manifest.json` - Theme-Farbe angepasst
-
 **Git Commit:** `a294d45` - "Redesign UI based on LINOS/Excelitas style"
+
+---
+
+### Step 4: Excelitas Green Header Design
+
+**Aufgabe:** Header-Banner im Excelitas Corporate Design umsetzen (basierend auf bereitgestelltem Logo-Bild)
+
+**Referenz:** Excelitas "Enabling the future" Banner mit dunkelgruenem Hintergrund, diagonalen Linien und Stern-Logo
+
+**Neue Farbpalette (Gruen):**
+```css
+--primary-green: #4a7c34;      /* Hauptgruen */
+--primary-dark: #1a3d1a;       /* Dunkelgruen */
+--header-bg: #1e4d1e;          /* Header-Hintergrund */
+--accent-green: #8dc63f;       /* Akzentfarbe (hellgruen) */
+--light-green: #a4d65e;        /* Helles Gruen */
+--secondary-gray: #2d5a2d;     /* Gruengrau */
+```
+
+**Header-Design:**
+```
++-----------------------------------------------------------+
+|  *  cd-app                           Enabling             |
+|                                      the future           |
+|  ~~~~~~~~~~~~~ (curved accent line) ~~~~~~~~~~~~~~~~~~~   |
++-----------------------------------------------------------+
+```
+
+**CSS-Techniken:**
+- `linear-gradient` fuer Hintergrund-Verlauf (#0d2e0d -> #3d6b3d)
+- `::before` Pseudo-Element fuer diagonale Linien (45deg)
+- `::after` Pseudo-Element fuer geschwungene Akzent-Linie
+- CSS-only Stern-Icon (Kreuz aus zwei Balken)
+
+**Geaenderte Dateien:**
+- `css/style.css` - Komplett neues gruenes Farbschema, Header-Banner mit Overlays
+- `index.html` - Neue Header-Struktur mit Logo und Tagline
+- `manifest.json` - Theme-Farbe auf #1a3d1a
+
+**Responsive:**
+- Desktop: Voller Header mit Tagline
+- Mobil: Kompakter Header, Tagline ausgeblendet
+
+**Git Commit:** `27e8231` - "Implement Excelitas green header design"
+
+---
+
+### Step 5: GitHub Pages Deployment
+
+**Aufgabe:** App live deployen
+
+**Anleitung:**
+1. GitHub Repository Settings oeffnen: https://github.com/OlliSparks/cd-app/settings/pages
+2. Pages > Source: "Deploy from a branch"
+3. Branch: main / Folder: / (root)
+4. Save
+
+**Live-URL:** https://ollisparks.github.io/cd-app/
 
 ---
 
@@ -128,7 +133,7 @@ Mobil:
     "name": "CD-App",
     "short_name": "CD-App",
     "display": "standalone",
-    "theme_color": "#0066b3",
+    "theme_color": "#1a3d1a",
     "background_color": "#ffffff"
 }
 ```
@@ -142,16 +147,15 @@ Mobil:
 
 Strukturiert in Sektionen:
 1. Reset & Variables
-2. Top Bar
-3. Header
-4. Main Navigation
-5. Main Content
-6. Cards/Tiles
-7. Buttons
-8. Forms
-9. Footer
-10. Mobile Bottom Nav
-11. Responsive Breakpoints
+2. Header Banner (Excelitas Style)
+3. Main Navigation
+4. Main Content
+5. Cards/Tiles
+6. Buttons
+7. Forms
+8. Footer
+9. Mobile Bottom Nav
+10. Responsive Breakpoints
 
 ### JavaScript-Struktur
 
@@ -159,7 +163,7 @@ Strukturiert in Sektionen:
 const app = {
     currentView: 'collection',
     init()           // Initialisierung
-    bindNavigation() // Event-Listener für Nav
+    bindNavigation() // Event-Listener fuer Nav
     showView(view)   // View-Wechsel
 }
 ```
@@ -172,10 +176,13 @@ const app = {
 |--------|--------------|
 | `1eab717` | Initial PWA setup for CD-App |
 | `a294d45` | Redesign UI based on LINOS/Excelitas style |
+| `31a8a33` | Add development documentation |
+| `27e8231` | Implement Excelitas green header design |
 
 ---
 
 ## Repository
 
 **GitHub:** https://github.com/OlliSparks/cd-app  
-**Branch:** main
+**Branch:** main  
+**Live:** https://ollisparks.github.io/cd-app/ (nach GitHub Pages Aktivierung)
