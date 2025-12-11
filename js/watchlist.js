@@ -11,10 +11,13 @@ const Watchlist = {
 
     // ===== INITIALISIERUNG =====
     init() {
+        console.log('Watchlist initializing...');
         this.loadFromStorage();
         this.setupEventListeners();
         this.setupModeTabs();
         this.checkForChanges();
+        this.renderWatchlist();
+        console.log('Watchlist ready:', this.articles.length, 'articles,', this.orders.length, 'orders');
     },
 
     // ===== LOCALSTORAGE =====
@@ -24,8 +27,20 @@ const Watchlist = {
             var savedOrders = localStorage.getItem('watchlist_orders');
             var savedAlerts = localStorage.getItem('watchlist_alerts');
 
-            this.articles = savedArticles ? JSON.parse(savedArticles) : this.getDefaultArticles();
-            this.orders = savedOrders ? JSON.parse(savedOrders) : this.getDefaultOrders();
+            // Check if data exists and is valid
+            var parsedArticles = null;
+            var parsedOrders = null;
+
+            if (savedArticles && savedArticles !== 'null' && savedArticles !== '[]') {
+                parsedArticles = JSON.parse(savedArticles);
+            }
+            if (savedOrders && savedOrders !== 'null' && savedOrders !== '[]') {
+                parsedOrders = JSON.parse(savedOrders);
+            }
+
+            // Use defaults if no saved data or empty arrays
+            this.articles = (parsedArticles && parsedArticles.length > 0) ? parsedArticles : this.getDefaultArticles();
+            this.orders = (parsedOrders && parsedOrders.length > 0) ? parsedOrders : this.getDefaultOrders();
             this.alerts = savedAlerts ? JSON.parse(savedAlerts) : [];
 
             // Parse dates
@@ -34,11 +49,15 @@ const Watchlist = {
                 order.originalDate = new Date(order.originalDate);
                 if (order.lastChecked) order.lastChecked = new Date(order.lastChecked);
             });
+
+            // Save defaults if they were used
+            this.saveToStorage();
         } catch (e) {
             console.error('Error loading watchlist:', e);
             this.articles = this.getDefaultArticles();
             this.orders = this.getDefaultOrders();
             this.alerts = [];
+            this.saveToStorage();
         }
     },
 
