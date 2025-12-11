@@ -134,6 +134,8 @@ body {
 nav.main-nav {
     background: var(--primary-dark);
     padding: 0 20px;
+    display: flex;
+    align-items: center;
 }
 
 nav.main-nav ul {
@@ -141,6 +143,7 @@ nav.main-nav ul {
     display: flex;
     margin: 0;
     padding: 0;
+    flex: 1;
 }
 
 nav.main-nav li {

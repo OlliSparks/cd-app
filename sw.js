@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cd-app-v2';
+const CACHE_NAME = 'cd-app-v3';
 const urlsToCache = [
     '/',
     '/index.html',
