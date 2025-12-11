@@ -4,19 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1a3d1a">
-    <meta name="description" content="CD-App">
+    <meta name="description" content="CD-App - Produktions-Dashboard">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
-    <title>CD-App</title>
+    <title>CD-App | Produktions-Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
     <div id="app">
-        <!-- Header Banner (Excelitas Style) -->
+        <!-- Header Banner -->
         <header class="header-banner">
             <div class="header-logo">
                 <div class="star-icon"></div>
                 <h1>cd-app</h1>
+            </div>
+            <div class="header-status">
+                <span class="status-dot live"></span>
+                <span class="status-text">LIVE</span>
+                <span class="status-time" id="current-time">--:--:--</span>
             </div>
             <div class="header-tagline">
                 <div class="tagline-small">Enabling</div>
@@ -24,58 +30,183 @@
             </div>
         </header>
 
-        <!-- Main Navigation (Desktop) -->
+        <!-- Main Navigation -->
         <nav class="main-nav">
             <ul>
-                <li><a href="#" class="active" data-view="collection">Übersicht</a></li>
-                <li><a href="#" data-view="add">Hinzufügen</a></li>
-                <li><a href="#" data-view="settings">Einstellungen</a></li>
+                <li><a href="#" class="active" data-view="dashboard">Dashboard</a></li>
+                <li><a href="#" data-view="timeline">Timeline</a></li>
+                <li><a href="#" data-view="orders">Auftraege</a></li>
+                <li><a href="#" data-view="alerts">Alerts</a></li>
             </ul>
+            <div class="nav-search">
+                <input type="text" id="search-input" placeholder="Auftrag suchen (z.B. AU-2024-0847)">
+                <button id="search-btn" type="button">Suchen</button>
+            </div>
         </nav>
 
+        <!-- Alert Bar -->
+        <div id="alert-bar" class="alert-bar hidden">
+            <div class="alert-content">
+                <span class="alert-icon">!</span>
+                <span class="alert-message"></span>
+                <span class="alert-count"></span>
+            </div>
+            <button class="alert-close" type="button">x</button>
+        </div>
+
         <!-- Main Content -->
-        <main>
-            <h2>Übersicht</h2>
-            <p>Willkommen zur CD-App!</p>
+        <main id="main-content">
+            <!-- Dashboard View -->
+            <div id="view-dashboard" class="view active">
+                <!-- Stats Overview -->
+                <div class="stats-bar">
+                    <div class="stat-item running">
+                        <span class="stat-value" id="stat-running">--</span>
+                        <span class="stat-label">In Betrieb</span>
+                    </div>
+                    <div class="stat-item idle">
+                        <span class="stat-value" id="stat-idle">--</span>
+                        <span class="stat-label">Frei</span>
+                    </div>
+                    <div class="stat-item setup">
+                        <span class="stat-value" id="stat-setup">--</span>
+                        <span class="stat-label">Ruesten</span>
+                    </div>
+                    <div class="stat-item fault">
+                        <span class="stat-value" id="stat-fault">--</span>
+                        <span class="stat-label">Stoerung</span>
+                    </div>
+                    <div class="stat-item orders">
+                        <span class="stat-value" id="stat-orders">--</span>
+                        <span class="stat-label">Auftraege</span>
+                    </div>
+                </div>
+
+                <!-- Area Filter Tabs -->
+                <div class="area-tabs" id="area-tabs">
+                    <button class="area-tab active" data-area="all">Alle (40)</button>
+                </div>
+
+                <!-- Workstation Grid -->
+                <div class="workstation-grid" id="workstation-grid">
+                </div>
+            </div>
+
+            <!-- Timeline View -->
+            <div id="view-timeline" class="view">
+                <div class="timeline-header">
+                    <h2>Produktions-Timeline</h2>
+                    <div class="timeline-controls">
+                        <select id="timeline-range">
+                            <option value="4">4 Stunden</option>
+                            <option value="8" selected>8 Stunden</option>
+                            <option value="24">24 Stunden</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="timeline-container" id="timeline-container">
+                </div>
+            </div>
+
+            <!-- Orders View -->
+            <div id="view-orders" class="view">
+                <div class="orders-header">
+                    <h2>Auftragsliste</h2>
+                    <div class="orders-filters">
+                        <select id="filter-priority">
+                            <option value="all">Alle Prioritaeten</option>
+                            <option value="critical">Kritisch</option>
+                            <option value="high">Hoch</option>
+                            <option value="normal">Normal</option>
+                            <option value="low">Niedrig</option>
+                        </select>
+                        <select id="filter-customer">
+                            <option value="all">Alle Kunden</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="orders-table-container">
+                    <table class="orders-table" id="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Auftrag</th>
+                                <th>Kunde</th>
+                                <th>Produkt</th>
+                                <th>Menge</th>
+                                <th>Prioritaet</th>
+                                <th>Liefertermin</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Alerts View -->
+            <div id="view-alerts" class="view">
+                <h2>Aktive Meldungen</h2>
+                <div class="alerts-list" id="alerts-list">
+                </div>
+            </div>
         </main>
+
+        <!-- Detail Modal -->
+        <div id="detail-modal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Arbeitsplatz Details</h3>
+                    <button class="modal-close" type="button">x</button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                </div>
+            </div>
+        </div>
 
         <!-- Footer -->
         <footer>
-            <a href="#">Impressum</a>
-            <a href="#">Datenschutz</a>
-            <a href="#">Kontakt</a>
-            <p style="margin-top: 10px;">&copy; 2024 CD-App</p>
+            <span>Produktions-Dashboard v1.0</span>
+            <span class="footer-sep">|</span>
+            <span id="last-update">Letztes Update: --:--:--</span>
         </footer>
 
         <!-- Mobile Bottom Navigation -->
         <nav id="bottom-nav">
-            <button data-view="collection">
+            <button data-view="dashboard" class="active">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="7" height="7"></rect>
                     <rect x="14" y="3" width="7" height="7"></rect>
                     <rect x="14" y="14" width="7" height="7"></rect>
                     <rect x="3" y="14" width="7" height="7"></rect>
                 </svg>
-                Übersicht
+                Dashboard
             </button>
-            <button data-view="add">
+            <button data-view="timeline">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="16"></line>
-                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <polyline points="8,6 12,12 8,18"></polyline>
                 </svg>
-                Hinzufügen
+                Timeline
             </button>
-            <button data-view="settings">
+            <button data-view="orders">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M12 1v4M12 19v4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M1 12h4M19 12h4M4.2 19.8l2.8-2.8M17 7l2.8-2.8"></path>
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
                 </svg>
-                Einstellungen
+                Auftraege
+            </button>
+            <button data-view="alerts">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                </svg>
+                Alerts
             </button>
         </nav>
     </div>
 
+    <script src="js/data.js"></script>
     <script src="js/app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
