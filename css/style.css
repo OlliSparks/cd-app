@@ -78,10 +78,17 @@ body {
 }
 
 .header-logo h1 {
-    font-size: 32px;
-    font-weight: 300;
+    font-size: 28px;
+    font-weight: 600;
     color: var(--white);
-    letter-spacing: 2px;
+    letter-spacing: 1px;
+}
+
+.header-powered {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 300;
+    margin-left: -5px;
 }
 
 .header-tagline {
