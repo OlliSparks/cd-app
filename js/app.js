@@ -578,24 +578,27 @@ const App = {
         if (!listContainer || !this.materialAnalysis) return;
 
         var analysis = this.materialAnalysis;
+        var items = analysis.availability || [];
 
         // Update stats
         var statCritical = document.getElementById('mat-stat-critical');
         var statHigh = document.getElementById('mat-stat-high');
         var statMedium = document.getElementById('mat-stat-medium');
         var statOk = document.getElementById('mat-stat-ok');
+        var statDelayed = document.getElementById('mat-stat-delayed');
 
-        if (statCritical) statCritical.textContent = analysis.summary.critical;
-        if (statHigh) statHigh.textContent = analysis.summary.high;
-        if (statMedium) statMedium.textContent = analysis.summary.medium;
-        if (statOk) statOk.textContent = analysis.summary.ok + analysis.summary.low;
+        if (statCritical) statCritical.textContent = analysis.summary.critical || 0;
+        if (statHigh) statHigh.textContent = analysis.summary.high || 0;
+        if (statMedium) statMedium.textContent = analysis.summary.medium || 0;
+        if (statOk) statOk.textContent = analysis.summary.ok || 0;
+        if (statDelayed) statDelayed.textContent = analysis.summary.delayedPOs || 0;
 
         // Update category tabs with counts
         if (tabsContainer) {
-            var categoryCounts = { all: analysis.items.length };
+            var categoryCounts = { all: items.length };
             MaterialData.categories.forEach(function(cat) {
-                categoryCounts[cat.id] = analysis.items.filter(function(item) {
-                    return item.material.category === cat.id;
+                categoryCounts[cat.id] = items.filter(function(item) {
+                    return item.category === cat.id;
                 }).length;
             });
 
@@ -608,17 +611,17 @@ const App = {
         }
 
         // Filter items by category
-        var filteredItems = analysis.items;
+        var filteredItems = items.slice();
         if (this.currentMaterialCategory !== 'all') {
-            filteredItems = analysis.items.filter(function(item) {
-                return item.material.category === self.currentMaterialCategory;
+            filteredItems = items.filter(function(item) {
+                return item.category === self.currentMaterialCategory;
             });
         }
 
         // Sort by risk level (critical first)
         var riskOrder = { critical: 0, high: 1, medium: 2, low: 3, ok: 4 };
         filteredItems.sort(function(a, b) {
-            return riskOrder[a.riskLevel] - riskOrder[b.riskLevel];
+            return riskOrder[a.risk] - riskOrder[b.risk];
         });
 
         // Render material cards
@@ -648,14 +651,23 @@ const App = {
     },
 
     renderMaterialCard(item, index) {
-        var self = this;
-        var riskLabel = this.getRiskLabel(item.riskLevel);
+        var riskLabel = this.getRiskLabel(item.risk);
+
+        // Daten extrahieren
+        var totalRequired = item.requirement ? item.requirement.total : 0;
+        var currentStock = item.inventory ? item.inventory.available : 0;
+        var incomingTotal = item.incoming ? item.incoming.total : 0;
+        var shortfall = item.coverage ? (item.coverage.shortfallWeek1 + item.coverage.shortfallWeek2) : 0;
 
         // Coverage bar calculation
-        var total = item.totalRequired;
-        var stockPercent = total > 0 ? Math.min(100, Math.round((item.currentStock / total) * 100)) : 0;
-        var incomingPercent = total > 0 ? Math.min(100 - stockPercent, Math.round((item.incoming / total) * 100)) : 0;
-        var shortfallPercent = item.shortfall > 0 ? Math.round((item.shortfall / total) * 100) : 0;
+        var total = totalRequired || 1;
+        var stockPercent = Math.min(100, Math.round((currentStock / total) * 100));
+        var incomingPercent = Math.min(100 - stockPercent, Math.round((incomingTotal / total) * 100));
+        var shortfallPercent = shortfall > 0 ? Math.min(100 - stockPercent - incomingPercent, Math.round((shortfall / total) * 100)) : 0;
+
+        // Reichweite berechnen (Tage)
+        var dailyUsage = totalRequired / 14;
+        var coverageDays = dailyUsage > 0 ? Math.round((currentStock + incomingTotal) / dailyUsage) : 99;
 
         // Purchase orders HTML
         var poHtml = '';
@@ -664,10 +676,11 @@ const App = {
             item.purchaseOrders.forEach(function(po) {
                 var statusClass = po.status === 'confirmed' ? 'confirmed' : (po.status === 'delayed' ? 'delayed' : 'partial');
                 var statusLabel = po.status === 'confirmed' ? 'Bestätigt' : (po.status === 'delayed' ? 'Verzögert' : 'Teillieferung');
+                var dateStr = po.expectedDelivery ? po.expectedDelivery.toLocaleDateString('de-DE') : '--';
                 poHtml += '<div class="mat-po-item">' +
-                    '<span class="mat-po-id">' + po.poNumber + '</span>' +
-                    '<span class="mat-po-qty">' + po.quantity + ' ' + item.material.unit + '</span>' +
-                    '<span class="mat-po-date">' + po.expectedDate.toLocaleDateString('de-DE') + '</span>' +
+                    '<span class="mat-po-id">' + po.id + '</span>' +
+                    '<span class="mat-po-qty">' + po.quantity + ' ' + item.unit + '</span>' +
+                    '<span class="mat-po-date">' + dateStr + '</span>' +
                     '<span class="mat-po-status ' + statusClass + '">' + statusLabel + '</span>' +
                     '</div>';
             });
@@ -679,8 +692,9 @@ const App = {
         if (item.affectedOrders && item.affectedOrders.length > 0) {
             affectedHtml = '<div class="mat-affected"><div class="mat-affected-title">Betroffene Aufträge (' + item.affectedOrders.length + ')</div><div class="mat-affected-list">';
             item.affectedOrders.slice(0, 5).forEach(function(order) {
-                var priorityClass = order.priority.id;
-                affectedHtml += '<div class="mat-affected-item"><span class="priority-dot ' + priorityClass + '"></span>' + order.id + '</div>';
+                var priorityClass = order.priority ? order.priority.id : 'normal';
+                var orderId = order.orderId || order.id || 'N/A';
+                affectedHtml += '<div class="mat-affected-item"><span class="priority-dot ' + priorityClass + '"></span>' + orderId + '</div>';
             });
             if (item.affectedOrders.length > 5) {
                 affectedHtml += '<div class="mat-affected-item">+' + (item.affectedOrders.length - 5) + ' weitere</div>';
@@ -689,17 +703,17 @@ const App = {
         }
 
         // Coverage days status
-        var coverageClass = item.coverageDays < 3 ? 'negative' : (item.coverageDays < 7 ? 'warning' : 'positive');
-        var shortfallClass = item.shortfall > 0 ? 'negative' : 'positive';
+        var coverageClass = coverageDays < 3 ? 'negative' : (coverageDays < 7 ? 'warning' : 'positive');
+        var shortfallClass = shortfall > 0 ? 'negative' : 'positive';
 
-        return '<div class="material-card risk-' + item.riskLevel + '">' +
+        return '<div class="material-card risk-' + item.risk + '">' +
             '<div class="mat-card-header">' +
             '<div class="mat-card-title">' +
             '<div class="mat-card-name">' + item.material.name + '</div>' +
             '<div class="mat-card-id">' + item.material.id + '</div>' +
             '</div>' +
             '<div class="mat-card-status">' +
-            '<span class="mat-risk-badge ' + item.riskLevel + '">' + riskLabel + '</span>' +
+            '<span class="mat-risk-badge ' + item.risk + '">' + riskLabel + '</span>' +
             '<button class="mat-card-toggle">▼</button>' +
             '</div>' +
             '</div>' +
@@ -707,22 +721,22 @@ const App = {
             '<div class="mat-info-grid">' +
             '<div class="mat-info-box">' +
             '<div class="mat-info-label">Lagerbestand</div>' +
-            '<div class="mat-info-value">' + item.currentStock + '</div>' +
-            '<div class="mat-info-unit">' + item.material.unit + '</div>' +
+            '<div class="mat-info-value">' + Math.round(currentStock) + '</div>' +
+            '<div class="mat-info-unit">' + item.unit + '</div>' +
             '</div>' +
             '<div class="mat-info-box">' +
             '<div class="mat-info-label">Bedarf (2 Wo.)</div>' +
-            '<div class="mat-info-value">' + item.totalRequired + '</div>' +
-            '<div class="mat-info-unit">' + item.material.unit + '</div>' +
+            '<div class="mat-info-value">' + Math.round(totalRequired) + '</div>' +
+            '<div class="mat-info-unit">' + item.unit + '</div>' +
             '</div>' +
             '<div class="mat-info-box">' +
             '<div class="mat-info-label">Fehlmenge</div>' +
-            '<div class="mat-info-value ' + shortfallClass + '">' + (item.shortfall > 0 ? '-' + item.shortfall : '0') + '</div>' +
-            '<div class="mat-info-unit">' + item.material.unit + '</div>' +
+            '<div class="mat-info-value ' + shortfallClass + '">' + (shortfall > 0 ? '-' + Math.round(shortfall) : '0') + '</div>' +
+            '<div class="mat-info-unit">' + item.unit + '</div>' +
             '</div>' +
             '<div class="mat-info-box">' +
             '<div class="mat-info-label">Reichweite</div>' +
-            '<div class="mat-info-value ' + coverageClass + '">' + item.coverageDays + '</div>' +
+            '<div class="mat-info-value ' + coverageClass + '">' + coverageDays + '</div>' +
             '<div class="mat-info-unit">Tage</div>' +
             '</div>' +
             '</div>' +
