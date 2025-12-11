@@ -10,6 +10,7 @@
     <title>CD-App | Produktions-Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/material.css">
 </head>
 <body>
     <div id="app">
@@ -33,7 +34,8 @@
         <!-- Main Navigation -->
         <nav class="main-nav">
             <ul>
-                <li><a href="#" class="active" data-view="dashboard">Dashboard</a></li>
+                <li><a href="#" class="active" data-view="dashboard">Produktion</a></li>
+                <li><a href="#" data-view="material">Material</a></li>
                 <li><a href="#" data-view="timeline">Timeline</a></li>
                 <li><a href="#" data-view="orders">Auftraege</a></li>
                 <li><a href="#" data-view="alerts">Alerts</a></li>
@@ -56,9 +58,8 @@
 
         <!-- Main Content -->
         <main id="main-content">
-            <!-- Dashboard View -->
+            <!-- Dashboard View (Produktion) -->
             <div id="view-dashboard" class="view active">
-                <!-- Stats Overview -->
                 <div class="stats-bar">
                     <div class="stat-item running">
                         <span class="stat-value" id="stat-running">--</span>
@@ -82,13 +83,48 @@
                     </div>
                 </div>
 
-                <!-- Area Filter Tabs -->
                 <div class="area-tabs" id="area-tabs">
                     <button class="area-tab active" data-area="all">Alle (40)</button>
                 </div>
 
-                <!-- Workstation Grid -->
                 <div class="workstation-grid" id="workstation-grid">
+                </div>
+            </div>
+
+            <!-- Material View (NEU) -->
+            <div id="view-material" class="view">
+                <!-- Material Stats -->
+                <div class="material-stats">
+                    <div class="mat-stat critical">
+                        <div class="mat-stat-value" id="mat-stat-critical">--</div>
+                        <div class="mat-stat-label">Kritisch</div>
+                    </div>
+                    <div class="mat-stat high">
+                        <div class="mat-stat-value" id="mat-stat-high">--</div>
+                        <div class="mat-stat-label">Hoch</div>
+                    </div>
+                    <div class="mat-stat medium">
+                        <div class="mat-stat-value" id="mat-stat-medium">--</div>
+                        <div class="mat-stat-label">Mittel</div>
+                    </div>
+                    <div class="mat-stat ok">
+                        <div class="mat-stat-value" id="mat-stat-ok">--</div>
+                        <div class="mat-stat-label">OK</div>
+                    </div>
+                    <div class="mat-stat">
+                        <div class="mat-stat-value" id="mat-stat-delayed">--</div>
+                        <div class="mat-stat-label">Verzoegerte Bestellungen</div>
+                    </div>
+                </div>
+
+                <!-- Material Category Tabs -->
+                <div class="material-tabs" id="material-tabs">
+                    <button class="mat-tab active" data-category="all">Alle</button>
+                    <button class="mat-tab" data-category="critical">Nur Kritisch</button>
+                </div>
+
+                <!-- Material List -->
+                <div class="material-list" id="material-list">
                 </div>
             </div>
 
@@ -156,7 +192,7 @@
             <div class="modal-backdrop"></div>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 id="modal-title">Arbeitsplatz Details</h3>
+                    <h3 id="modal-title">Details</h3>
                     <button class="modal-close" type="button">x</button>
                 </div>
                 <div class="modal-body" id="modal-body">
@@ -166,7 +202,7 @@
 
         <!-- Footer -->
         <footer>
-            <span>Produktions-Dashboard v1.0</span>
+            <span>Produktions-Dashboard v1.1</span>
             <span class="footer-sep">|</span>
             <span id="last-update">Letztes Update: --:--:--</span>
         </footer>
@@ -180,14 +216,15 @@
                     <rect x="14" y="14" width="7" height="7"></rect>
                     <rect x="3" y="14" width="7" height="7"></rect>
                 </svg>
-                Dashboard
+                Produktion
             </button>
-            <button data-view="timeline">
+            <button data-view="material">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <polyline points="8,6 12,12 8,18"></polyline>
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
                 </svg>
-                Timeline
+                Material
             </button>
             <button data-view="orders">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -207,6 +244,7 @@
     </div>
 
     <script src="js/data.js"></script>
+    <script src="js/material-data.js"></script>
     <script src="js/app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
