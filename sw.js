@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cd-app-v8';
+const CACHE_NAME = 'cd-app-v9';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -8,6 +8,7 @@ const urlsToCache = [
     '/js/app.js',
     '/js/data.js',
     '/js/material-data.js',
+    '/js/watchlist.js',
     '/manifest.json'
 ];
 

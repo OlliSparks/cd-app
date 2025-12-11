@@ -94,38 +94,161 @@
 
             <!-- Material View (NEU) -->
             <div id="view-material" class="view">
-                <!-- Material Stats -->
-                <div class="material-stats">
-                    <div class="mat-stat critical">
-                        <div class="mat-stat-value" id="mat-stat-critical">--</div>
-                        <div class="mat-stat-label">Kritisch</div>
+                <!-- Material Mode Tabs -->
+                <div class="material-mode-tabs">
+                    <button class="mode-tab active" data-mode="overview">Übersicht</button>
+                    <button class="mode-tab" data-mode="watchlist">Watchlist</button>
+                </div>
+
+                <!-- OVERVIEW MODE -->
+                <div id="material-overview" class="material-mode active">
+                    <!-- Material Stats -->
+                    <div class="material-stats">
+                        <div class="mat-stat critical">
+                            <div class="mat-stat-value" id="mat-stat-critical">--</div>
+                            <div class="mat-stat-label">Kritisch</div>
+                        </div>
+                        <div class="mat-stat high">
+                            <div class="mat-stat-value" id="mat-stat-high">--</div>
+                            <div class="mat-stat-label">Hoch</div>
+                        </div>
+                        <div class="mat-stat medium">
+                            <div class="mat-stat-value" id="mat-stat-medium">--</div>
+                            <div class="mat-stat-label">Mittel</div>
+                        </div>
+                        <div class="mat-stat ok">
+                            <div class="mat-stat-value" id="mat-stat-ok">--</div>
+                            <div class="mat-stat-label">OK</div>
+                        </div>
+                        <div class="mat-stat">
+                            <div class="mat-stat-value" id="mat-stat-delayed">--</div>
+                            <div class="mat-stat-label">Verzoegerte Bestellungen</div>
+                        </div>
                     </div>
-                    <div class="mat-stat high">
-                        <div class="mat-stat-value" id="mat-stat-high">--</div>
-                        <div class="mat-stat-label">Hoch</div>
+
+                    <!-- Material Category Tabs -->
+                    <div class="material-tabs" id="material-tabs">
+                        <button class="mat-tab active" data-category="all">Alle</button>
+                        <button class="mat-tab" data-category="critical">Nur Kritisch</button>
                     </div>
-                    <div class="mat-stat medium">
-                        <div class="mat-stat-value" id="mat-stat-medium">--</div>
-                        <div class="mat-stat-label">Mittel</div>
-                    </div>
-                    <div class="mat-stat ok">
-                        <div class="mat-stat-value" id="mat-stat-ok">--</div>
-                        <div class="mat-stat-label">OK</div>
-                    </div>
-                    <div class="mat-stat">
-                        <div class="mat-stat-value" id="mat-stat-delayed">--</div>
-                        <div class="mat-stat-label">Verzoegerte Bestellungen</div>
+
+                    <!-- Material List -->
+                    <div class="material-list" id="material-list">
                     </div>
                 </div>
 
-                <!-- Material Category Tabs -->
-                <div class="material-tabs" id="material-tabs">
-                    <button class="mat-tab active" data-category="all">Alle</button>
-                    <button class="mat-tab" data-category="critical">Nur Kritisch</button>
-                </div>
+                <!-- WATCHLIST MODE -->
+                <div id="material-watchlist" class="material-mode">
+                    <!-- Watchlist Header -->
+                    <div class="watchlist-header">
+                        <div class="watchlist-stats">
+                            <div class="wl-stat critical">
+                                <span class="wl-stat-value" id="wl-stat-critical">0</span>
+                                <span class="wl-stat-label">Unter Grenzwert</span>
+                            </div>
+                            <div class="wl-stat ok">
+                                <span class="wl-stat-value" id="wl-stat-ok">0</span>
+                                <span class="wl-stat-label">OK</span>
+                            </div>
+                            <div class="wl-stat orders">
+                                <span class="wl-stat-value" id="wl-stat-orders">0</span>
+                                <span class="wl-stat-label">Bestellungen</span>
+                            </div>
+                            <div class="wl-stat alerts">
+                                <span class="wl-stat-value" id="wl-stat-alerts">0</span>
+                                <span class="wl-stat-label">Neue Meldungen</span>
+                            </div>
+                        </div>
+                        <div class="watchlist-actions">
+                            <button class="wl-btn" id="btn-add-article">+ Artikel</button>
+                            <button class="wl-btn" id="btn-add-order">+ Bestellung</button>
+                        </div>
+                    </div>
 
-                <!-- Material List -->
-                <div class="material-list" id="material-list">
+                    <!-- Watchlist Alerts -->
+                    <div class="watchlist-alerts" id="watchlist-alerts"></div>
+
+                    <!-- Watchlist Tabs -->
+                    <div class="watchlist-tabs">
+                        <button class="wl-tab active" data-wltab="articles">Artikel</button>
+                        <button class="wl-tab" data-wltab="orders">Bestellungen</button>
+                    </div>
+
+                    <!-- Watchlist Content -->
+                    <div class="watchlist-content" id="watchlist-articles">
+                    </div>
+                    <div class="watchlist-content" id="watchlist-orders" style="display:none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Article Modal -->
+            <div id="add-article-modal" class="modal hidden">
+                <div class="modal-backdrop"></div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Artikel zur Watchlist hinzufügen</h3>
+                        <button class="modal-close" type="button">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Artikel auswählen</label>
+                            <select id="wl-article-select">
+                                <option value="">-- Artikel wählen --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Kritischer Bestand (Grenzwert)</label>
+                            <input type="number" id="wl-article-threshold" placeholder="z.B. 50">
+                        </div>
+                        <div class="form-group">
+                            <label>Notiz (optional)</label>
+                            <input type="text" id="wl-article-note" placeholder="z.B. Wichtig für Projekt XY">
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-secondary" id="btn-cancel-article">Abbrechen</button>
+                            <button class="btn btn-primary" id="btn-save-article">Hinzufügen</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Order Modal -->
+            <div id="add-order-modal" class="modal hidden">
+                <div class="modal-backdrop"></div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>SAP-Bestellung tracken</h3>
+                        <button class="modal-close" type="button">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Bestellnummer (SAP)</label>
+                            <input type="text" id="wl-order-number" placeholder="z.B. PO-450123">
+                        </div>
+                        <div class="form-group">
+                            <label>Artikel</label>
+                            <select id="wl-order-article">
+                                <option value="">-- Artikel wählen --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Menge</label>
+                            <input type="number" id="wl-order-quantity" placeholder="z.B. 100">
+                        </div>
+                        <div class="form-group">
+                            <label>Erwarteter Liefertermin</label>
+                            <input type="date" id="wl-order-date">
+                        </div>
+                        <div class="form-group">
+                            <label>Lieferant (optional)</label>
+                            <input type="text" id="wl-order-supplier" placeholder="z.B. Schott AG">
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-secondary" id="btn-cancel-order">Abbrechen</button>
+                            <button class="btn btn-primary" id="btn-save-order">Hinzufügen</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -247,6 +370,7 @@
     <script src="js/data.js"></script>
     <script src="js/material-data.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/watchlist.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
