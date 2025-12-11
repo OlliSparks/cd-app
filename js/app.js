@@ -14,17 +14,23 @@ const App = {
 
     init() {
         console.log('CD-App Dashboard initializing...');
-        this.refreshData();
-        this.setupNavigation();
-        this.setupAreaTabs();
-        this.setupMaterialTabs();
-        this.setupSearch();
-        this.setupModal();
-        this.setupFilters();
-        this.updateClock();
-        setInterval(() => this.updateClock(), 1000);
-        this.updateInterval = setInterval(() => this.refreshData(), 30000);
-        console.log('CD-App Dashboard ready!');
+        try {
+            this.setupNavigation();
+            console.log('Navigation setup done');
+            this.refreshData();
+            console.log('Data refreshed');
+            this.setupAreaTabs();
+            this.setupMaterialTabs();
+            this.setupSearch();
+            this.setupModal();
+            this.setupFilters();
+            this.updateClock();
+            setInterval(() => this.updateClock(), 1000);
+            this.updateInterval = setInterval(() => this.refreshData(), 30000);
+            console.log('CD-App Dashboard ready!');
+        } catch (e) {
+            console.error('Init error:', e);
+        }
     },
 
     refreshData() {
