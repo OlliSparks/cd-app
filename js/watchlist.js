@@ -14,7 +14,7 @@ const Watchlist = {
         console.log('Watchlist initializing...');
         this.loadFromStorage();
         this.setupEventListeners();
-        this.setupModeTabs();
+        this.setupViewListener();
         this.checkForChanges();
         this.renderWatchlist();
         console.log('Watchlist ready:', this.articles.length, 'articles,', this.orders.length, 'orders');
@@ -206,25 +206,16 @@ const Watchlist = {
         });
     },
 
-    setupModeTabs() {
+    setupViewListener() {
         var self = this;
-        document.querySelectorAll('.material-mode-tabs .mode-tab').forEach(function(tab) {
-            tab.onclick = function() {
-                document.querySelectorAll('.material-mode-tabs .mode-tab').forEach(function(t) {
-                    t.classList.remove('active');
-                });
-                tab.classList.add('active');
-
-                var mode = tab.dataset.mode;
-                document.querySelectorAll('.material-mode').forEach(function(m) {
-                    m.classList.remove('active');
-                });
-                document.getElementById('material-' + mode).classList.add('active');
-
-                if (mode === 'watchlist') {
+        // Listen for view changes to render watchlist when view becomes active
+        document.querySelectorAll('[data-view="watchlist"]').forEach(function(el) {
+            el.addEventListener('click', function() {
+                // Small delay to ensure view is switched
+                setTimeout(function() {
                     self.renderWatchlist();
-                }
-            };
+                }, 50);
+            });
         });
     },
 

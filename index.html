@@ -36,9 +36,10 @@
         <nav class="main-nav">
             <ul>
                 <li><a href="#" class="active" data-view="dashboard">Produktion</a></li>
-                <li><a href="#" data-view="material">Material</a></li>
                 <li><a href="#" data-view="timeline">Timeline</a></li>
                 <li><a href="#" data-view="orders">Auftraege</a></li>
+                <li><a href="#" data-view="material">Material</a></li>
+                <li><a href="#" data-view="watchlist">Watchlist</a></li>
                 <li><a href="#" data-view="alerts">Alerts</a></li>
             </ul>
             <div class="nav-search">
@@ -92,93 +93,84 @@
                 </div>
             </div>
 
-            <!-- Material View (NEU) -->
+            <!-- Material View -->
             <div id="view-material" class="view">
-                <!-- Material Mode Tabs -->
-                <div class="material-mode-tabs">
-                    <button class="mode-tab active" data-mode="overview">Übersicht</button>
-                    <button class="mode-tab" data-mode="watchlist">Watchlist</button>
-                </div>
-
-                <!-- OVERVIEW MODE -->
-                <div id="material-overview" class="material-mode active">
-                    <!-- Material Stats -->
-                    <div class="material-stats">
-                        <div class="mat-stat critical">
-                            <div class="mat-stat-value" id="mat-stat-critical">--</div>
-                            <div class="mat-stat-label">Kritisch</div>
-                        </div>
-                        <div class="mat-stat high">
-                            <div class="mat-stat-value" id="mat-stat-high">--</div>
-                            <div class="mat-stat-label">Hoch</div>
-                        </div>
-                        <div class="mat-stat medium">
-                            <div class="mat-stat-value" id="mat-stat-medium">--</div>
-                            <div class="mat-stat-label">Mittel</div>
-                        </div>
-                        <div class="mat-stat ok">
-                            <div class="mat-stat-value" id="mat-stat-ok">--</div>
-                            <div class="mat-stat-label">OK</div>
-                        </div>
-                        <div class="mat-stat">
-                            <div class="mat-stat-value" id="mat-stat-delayed">--</div>
-                            <div class="mat-stat-label">Verzoegerte Bestellungen</div>
-                        </div>
+                <!-- Material Stats -->
+                <div class="material-stats">
+                    <div class="mat-stat critical">
+                        <div class="mat-stat-value" id="mat-stat-critical">--</div>
+                        <div class="mat-stat-label">Kritisch</div>
                     </div>
-
-                    <!-- Material Category Tabs -->
-                    <div class="material-tabs" id="material-tabs">
-                        <button class="mat-tab active" data-category="all">Alle</button>
-                        <button class="mat-tab" data-category="critical">Nur Kritisch</button>
+                    <div class="mat-stat high">
+                        <div class="mat-stat-value" id="mat-stat-high">--</div>
+                        <div class="mat-stat-label">Hoch</div>
                     </div>
-
-                    <!-- Material List -->
-                    <div class="material-list" id="material-list">
+                    <div class="mat-stat medium">
+                        <div class="mat-stat-value" id="mat-stat-medium">--</div>
+                        <div class="mat-stat-label">Mittel</div>
+                    </div>
+                    <div class="mat-stat ok">
+                        <div class="mat-stat-value" id="mat-stat-ok">--</div>
+                        <div class="mat-stat-label">OK</div>
+                    </div>
+                    <div class="mat-stat">
+                        <div class="mat-stat-value" id="mat-stat-delayed">--</div>
+                        <div class="mat-stat-label">Verzoegerte Bestellungen</div>
                     </div>
                 </div>
 
-                <!-- WATCHLIST MODE -->
-                <div id="material-watchlist" class="material-mode">
-                    <!-- Watchlist Header -->
-                    <div class="watchlist-header">
-                        <div class="watchlist-stats">
-                            <div class="wl-stat critical">
-                                <span class="wl-stat-value" id="wl-stat-critical">0</span>
-                                <span class="wl-stat-label">Unter Grenzwert</span>
-                            </div>
-                            <div class="wl-stat ok">
-                                <span class="wl-stat-value" id="wl-stat-ok">0</span>
-                                <span class="wl-stat-label">OK</span>
-                            </div>
-                            <div class="wl-stat orders">
-                                <span class="wl-stat-value" id="wl-stat-orders">0</span>
-                                <span class="wl-stat-label">Bestellungen</span>
-                            </div>
-                            <div class="wl-stat alerts">
-                                <span class="wl-stat-value" id="wl-stat-alerts">0</span>
-                                <span class="wl-stat-label">Neue Meldungen</span>
-                            </div>
+                <!-- Material Category Tabs -->
+                <div class="material-tabs" id="material-tabs">
+                    <button class="mat-tab active" data-category="all">Alle</button>
+                    <button class="mat-tab" data-category="critical">Nur Kritisch</button>
+                </div>
+
+                <!-- Material List -->
+                <div class="material-list" id="material-list">
+                </div>
+            </div>
+
+            <!-- Watchlist View (eigenständig) -->
+            <div id="view-watchlist" class="view">
+                <!-- Watchlist Header -->
+                <div class="watchlist-header">
+                    <div class="watchlist-stats">
+                        <div class="wl-stat critical">
+                            <span class="wl-stat-value" id="wl-stat-critical">0</span>
+                            <span class="wl-stat-label">Unter Grenzwert</span>
                         </div>
-                        <div class="watchlist-actions">
-                            <button class="wl-btn" id="btn-add-article">+ Artikel</button>
-                            <button class="wl-btn" id="btn-add-order">+ Bestellung</button>
+                        <div class="wl-stat ok">
+                            <span class="wl-stat-value" id="wl-stat-ok">0</span>
+                            <span class="wl-stat-label">OK</span>
+                        </div>
+                        <div class="wl-stat orders">
+                            <span class="wl-stat-value" id="wl-stat-orders">0</span>
+                            <span class="wl-stat-label">Bestellungen</span>
+                        </div>
+                        <div class="wl-stat alerts">
+                            <span class="wl-stat-value" id="wl-stat-alerts">0</span>
+                            <span class="wl-stat-label">Neue Meldungen</span>
                         </div>
                     </div>
-
-                    <!-- Watchlist Alerts -->
-                    <div class="watchlist-alerts" id="watchlist-alerts"></div>
-
-                    <!-- Watchlist Tabs -->
-                    <div class="watchlist-tabs">
-                        <button class="wl-tab active" data-wltab="articles">Artikel</button>
-                        <button class="wl-tab" data-wltab="orders">Bestellungen</button>
+                    <div class="watchlist-actions">
+                        <button class="wl-btn" id="btn-add-article">+ Artikel</button>
+                        <button class="wl-btn" id="btn-add-order">+ Bestellung</button>
                     </div>
+                </div>
 
-                    <!-- Watchlist Content -->
-                    <div class="watchlist-content" id="watchlist-articles">
-                    </div>
-                    <div class="watchlist-content" id="watchlist-orders" style="display:none">
-                    </div>
+                <!-- Watchlist Alerts -->
+                <div class="watchlist-alerts" id="watchlist-alerts"></div>
+
+                <!-- Watchlist Tabs -->
+                <div class="watchlist-tabs">
+                    <button class="wl-tab active" data-wltab="articles">Artikel</button>
+                    <button class="wl-tab" data-wltab="orders">Bestellungen</button>
+                </div>
+
+                <!-- Watchlist Content -->
+                <div class="watchlist-content" id="watchlist-articles">
+                </div>
+                <div class="watchlist-content" id="watchlist-orders" style="display:none">
                 </div>
             </div>
 
@@ -342,6 +334,13 @@
                 </svg>
                 Produktion
             </button>
+            <button data-view="orders">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Auftraege
+            </button>
             <button data-view="material">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -350,12 +349,11 @@
                 </svg>
                 Material
             </button>
-            <button data-view="orders">
+            <button data-view="watchlist">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
                 </svg>
-                Auftraege
+                Watchlist
             </button>
             <button data-view="alerts">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
