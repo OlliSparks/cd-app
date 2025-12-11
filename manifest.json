@@ -1,7 +1,7 @@
 {
-    "name": "OPTOMIZE YOURSELF",
+    "name": "OPT'O'MIZE YOURSELF",
     "short_name": "OY App",
-    "description": "OPTOMIZE YOURSELF - powered by Christian Doehl",
+    "description": "OPT'O'MIZE YOURSELF - powered by Christian Doehl",
     "start_url": "/cd-app/",
     "display": "standalone",
     "background_color": "#ffffff",
