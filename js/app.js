@@ -6,12 +6,15 @@
 const App = {
     productionState: null,
     materialAnalysis: null,
+    productionPlans: [],
     alerts: [],
     currentView: 'dashboard',
     currentArea: 'all',
     currentStatusFilter: 'all',
     currentMaterialCategory: 'all',
     currentRiskFilter: 'all',
+    currentPPFilter: 'all',
+    currentPPTimeRange: 'week',
     updateInterval: null,
 
     init() {
@@ -29,6 +32,7 @@ const App = {
                 this.setupSearch();
                 this.setupModal();
                 this.setupFilters();
+                this.setupProductionPlan();
             } else {
                 console.error('Data modules not loaded!');
             }
@@ -52,6 +56,7 @@ const App = {
         this.renderOrders();
         this.renderAlerts();
         this.renderMaterial();
+        this.renderProductionPlan();
         this.updateStats();
         this.updateAlertBar();
         this.updateLastUpdate();
@@ -853,6 +858,216 @@ const App = {
         };
         return labels[risk] || risk;
     }
+
+
+    // ===== PRODUKTIONSPLANUNG =====
+
+    setupProductionPlan() {
+        var self = this;
+
+        // Filter Event Handlers
+        var orderFilter = document.getElementById('pp-order-filter');
+        var timeRange = document.getElementById('pp-timerange');
+
+        if (orderFilter) {
+            orderFilter.addEventListener('change', function() {
+                self.currentPPFilter = orderFilter.value;
+                self.renderProductionPlan();
+            });
+        }
+
+        if (timeRange) {
+            timeRange.addEventListener('change', function() {
+                self.currentPPTimeRange = timeRange.value;
+                self.renderProductionPlan();
+            });
+        }
+    },
+
+    renderProductionPlan() {
+        var self = this;
+        var container = document.getElementById('pp-gantt-container');
+        var legendContainer = document.getElementById('pp-legend-items');
+        if (!container || typeof ProductionPlanData === 'undefined') return;
+
+        // Produktionspläne generieren
+        this.productionPlans = ProductionPlanData.generateProductionPlan(
+            this.productionState.orders,
+            this.productionState
+        );
+
+        // Filter anwenden
+        var filteredPlans = this.productionPlans.slice();
+        if (this.currentPPFilter !== 'all') {
+            filteredPlans = filteredPlans.filter(function(plan) {
+                if (self.currentPPFilter === 'critical') {
+                    return plan.order.priority.id === 'critical';
+                } else if (self.currentPPFilter === 'high') {
+                    return plan.order.priority.id === 'high' || plan.order.priority.id === 'critical';
+                } else if (self.currentPPFilter === 'inprogress') {
+                    return plan.currentStep !== null && plan.progress < 100;
+                }
+                return true;
+            });
+        }
+
+        // Statistiken aktualisieren
+        var summary = ProductionPlanData.generatePlanSummary(this.productionPlans);
+        var statTotal = document.getElementById('pp-stat-total');
+        var statActive = document.getElementById('pp-stat-active');
+        var statWaiting = document.getElementById('pp-stat-waiting');
+        var statCompleted = document.getElementById('pp-stat-completed');
+
+        if (statTotal) statTotal.textContent = summary.total;
+        if (statActive) statActive.textContent = summary.active;
+        if (statWaiting) statWaiting.textContent = summary.waiting;
+        if (statCompleted) statCompleted.textContent = summary.completed;
+
+        // Legende rendern
+        if (legendContainer) {
+            var legendHtml = '';
+            ProductionData.areas.forEach(function(area) {
+                var color = ProductionPlanData.areaColors[area.id] || '#95a5a6';
+                legendHtml += '<div class="pp-legend-item">' +
+                    '<span class="pp-legend-color" style="background: ' + color + '"></span>' +
+                    '<span>' + area.name + '</span>' +
+                    '</div>';
+            });
+
+            // Status-Legende hinzufügen
+            legendHtml += '<div class="pp-status-legend">';
+            legendHtml += '<div class="pp-status-item"><span class="pp-status-dot completed"></span>Abgeschlossen</div>';
+            legendHtml += '<div class="pp-status-item"><span class="pp-status-dot inProgress"></span>In Bearbeitung</div>';
+            legendHtml += '<div class="pp-status-item"><span class="pp-status-dot waiting"></span>Wartend</div>';
+            legendHtml += '<div class="pp-status-item"><span class="pp-status-dot delayed"></span>Verzögert</div>';
+            legendHtml += '</div>';
+
+            legendContainer.innerHTML = legendHtml;
+        }
+
+        // Gantt-Rows rendern
+        if (filteredPlans.length === 0) {
+            container.innerHTML = '<div class="pp-no-data">' +
+                '<div class="pp-no-data-icon">📋</div>' +
+                '<div>Keine Aufträge gefunden</div>' +
+                '</div>';
+            return;
+        }
+
+        var html = '';
+        filteredPlans.forEach(function(plan, index) {
+            html += self.renderProductionPlanRow(plan, index);
+        });
+
+        container.innerHTML = html;
+
+        // Click-Handler für Expandieren
+        container.querySelectorAll('.pp-gantt-header').forEach(function(header) {
+            header.addEventListener('click', function() {
+                var row = header.closest('.pp-gantt-row');
+                row.classList.toggle('expanded');
+            });
+        });
+    },
+
+    renderProductionPlanRow(plan, index) {
+        var self = this;
+        var order = plan.order;
+
+        // Step-Indicators erstellen
+        var stepsHtml = '';
+        plan.steps.forEach(function(step, stepIndex) {
+            var color = ProductionPlanData.areaColors[step.area] || '#95a5a6';
+            var statusClass = step.status;
+            var title = step.operation + ' (' + step.areaName + ')';
+
+            stepsHtml += '<div class="pp-step-indicator ' + statusClass + '" ' +
+                'style="background-color: ' + (step.status === 'completed' ? '#27ae60' :
+                                                step.status === 'inProgress' ? '#3498db' :
+                                                step.status === 'delayed' ? '#e74c3c' :
+                                                step.status === 'waiting' ? '#95a5a6' : color) + '" ' +
+                'title="' + title + '">' +
+                (stepIndex + 1) +
+                '</div>';
+        });
+
+        // Detail-Tabelle erstellen
+        var detailHtml = '<div class="pp-table-wrapper"><table class="pp-steps-table">' +
+            '<thead><tr>' +
+            '<th>Schritt</th>' +
+            '<th>Arbeitsgang</th>' +
+            '<th>Arbeitsplatz</th>' +
+            '<th>Dauer</th>' +
+            '<th>Fortschritt</th>' +
+            '<th>Status</th>' +
+            '</tr></thead><tbody>';
+
+        plan.steps.forEach(function(step, stepIndex) {
+            var areaColor = ProductionPlanData.areaColors[step.area] || '#95a5a6';
+            var isCurrentStep = plan.currentStep === stepIndex;
+            var rowClass = isCurrentStep ? 'current-step' : (step.status === 'delayed' ? 'delayed-step' : '');
+
+            var wsHtml = step.assignedWorkstation ?
+                '<span class="pp-ws-status-dot ' + step.status + '"></span>' +
+                '<span class="pp-ws-name">' + step.assignedWorkstation.name + '</span>' :
+                '<span class="pp-ws-pending">Noch nicht zugewiesen</span>';
+
+            var progressFillStyle = 'width: ' + step.progress + '%';
+
+            var statusLabel = step.status === 'completed' ? 'Abgeschlossen' :
+                              step.status === 'inProgress' ? 'In Bearbeitung' :
+                              step.status === 'waiting' ? 'Wartend' :
+                              step.status === 'delayed' ? 'Verzögert' : 'Geplant';
+
+            detailHtml += '<tr class="' + rowClass + '">' +
+                '<td><span class="pp-step-num">' + step.stepNumber + '</span></td>' +
+                '<td><div class="pp-operation">' +
+                '<span class="pp-area-tag" style="background: ' + areaColor + '"></span>' +
+                '<span class="pp-operation-name">' + step.operation + '</span>' +
+                '</div></td>' +
+                '<td><div class="pp-workstation">' + wsHtml + '</div></td>' +
+                '<td class="pp-time-cell">' + step.totalTime + ' min</td>' +
+                '<td><div class="pp-step-progress">' +
+                '<div class="pp-step-progress-bar"><div class="pp-step-progress-fill ' + step.status + '" style="' + progressFillStyle + '"></div></div>' +
+                '<span class="pp-step-progress-text">' + step.progress + '%</span>' +
+                '</div></td>' +
+                '<td><span class="pp-status-badge ' + step.status + '">' + statusLabel + '</span></td>' +
+                '</tr>';
+        });
+
+        detailHtml += '</tbody></table></div>';
+
+        // Zusammenfassung
+        var summaryHtml = '<div class="pp-order-summary">' +
+            '<div class="pp-summary-item"><span class="pp-summary-label">Liefertermin</span><span class="pp-summary-value">' + order.dueDate.toLocaleDateString('de-DE') + '</span></div>' +
+            '<div class="pp-summary-item"><span class="pp-summary-label">Menge</span><span class="pp-summary-value">' + order.quantity + ' Stk.</span></div>' +
+            '<div class="pp-summary-item"><span class="pp-summary-label">Gesamtdauer</span><span class="pp-summary-value">' + plan.routing.totalDuration + ' min</span></div>' +
+            '<div class="pp-summary-item"><span class="pp-summary-label">Geschätzt fertig</span><span class="pp-summary-value">' + plan.estimatedEnd.toLocaleDateString('de-DE') + '</span></div>' +
+            '</div>';
+
+        return '<div class="pp-gantt-row" data-order-id="' + order.id + '">' +
+            '<div class="pp-gantt-header">' +
+            '<div class="pp-order-info">' +
+            '<div class="pp-order-id">' +
+            '<span class="pp-priority-badge ' + order.priority.id + '"></span>' +
+            order.id +
+            '</div>' +
+            '<div class="pp-order-product">' + order.product.name + '</div>' +
+            '<div class="pp-order-customer">' + order.customer.name + '</div>' +
+            '</div>' +
+            '<div class="pp-progress-overview">' +
+            '<div class="pp-step-indicators">' + stepsHtml + '</div>' +
+            '<span class="pp-progress-percent">' + plan.progress + '%</span>' +
+            '</div>' +
+            '<div class="pp-expand-toggle">▼</div>' +
+            '</div>' +
+            '<div class="pp-gantt-detail">' +
+            summaryHtml +
+            detailHtml +
+            '</div>' +
+            '</div>';
+    }
+
 };
 
 document.addEventListener('DOMContentLoaded', function() { App.init(); });

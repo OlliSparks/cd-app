@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/material.css">
     <link rel="stylesheet" href="css/qm.css">
+    <link rel="stylesheet" href="css/productionplan.css">
 </head>
 <body>
     <div id="app">
@@ -38,6 +39,7 @@
             <ul>
                 <li><a href="#" class="active" data-view="dashboard">Produktion</a></li>
                 <li><a href="#" data-view="timeline">Timeline</a></li>
+                <li><a href="#" data-view="productionplan">Produktionsplanung</a></li>
                 <li><a href="#" data-view="orders">Auftraege</a></li>
                 <li><a href="#" data-view="material">Material</a></li>
                 <li><a href="#" data-view="watchlist">Watchlist</a></li>
@@ -259,6 +261,60 @@
                     </div>
                 </div>
                 <div class="timeline-container" id="timeline-container">
+                </div>
+            </div>
+
+            <!-- Produktionsplanung View -->
+            <div id="view-productionplan" class="view">
+                <div class="pp-header">
+                    <h2>Produktionsplanung</h2>
+                    <div class="pp-subtitle">SAP Normalarbeitsplan - Auftragsverfolgung</div>
+                    <div class="pp-controls">
+                        <select id="pp-order-filter">
+                            <option value="all">Alle Auftraege</option>
+                            <option value="critical">Kritisch</option>
+                            <option value="high">Hoch</option>
+                            <option value="inprogress">In Bearbeitung</option>
+                        </select>
+                        <select id="pp-timerange">
+                            <option value="today">Heute</option>
+                            <option value="week" selected>Diese Woche</option>
+                            <option value="2weeks">2 Wochen</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Stats Bar -->
+                <div class="pp-stats">
+                    <div class="pp-stat">
+                        <span class="pp-stat-value" id="pp-stat-total">--</span>
+                        <span class="pp-stat-label">Auftraege gesamt</span>
+                    </div>
+                    <div class="pp-stat active">
+                        <span class="pp-stat-value" id="pp-stat-active">--</span>
+                        <span class="pp-stat-label">In Bearbeitung</span>
+                    </div>
+                    <div class="pp-stat waiting">
+                        <span class="pp-stat-value" id="pp-stat-waiting">--</span>
+                        <span class="pp-stat-label">Wartend</span>
+                    </div>
+                    <div class="pp-stat completed">
+                        <span class="pp-stat-value" id="pp-stat-completed">--</span>
+                        <span class="pp-stat-label">Abgeschlossen</span>
+                    </div>
+                </div>
+
+                <!-- Legende -->
+                <div class="pp-legend">
+                    <div class="pp-legend-title">Arbeitsstationen:</div>
+                    <div class="pp-legend-items" id="pp-legend-items">
+                        <!-- Wird per JS gefuellt -->
+                    </div>
+                </div>
+
+                <!-- Gantt Chart Container -->
+                <div class="pp-gantt-container" id="pp-gantt-container">
+                    <!-- Wird per JS gefuellt -->
                 </div>
             </div>
 
@@ -536,6 +592,7 @@
     <script src="js/data.js"></script>
     <script src="js/material-data.js"></script>
     <script src="js/qm-data.js"></script>
+    <script src="js/productionplan-data.js"></script>
     <script src="js/app.js"></script>
     <script src="js/watchlist.js"></script>
     <script>

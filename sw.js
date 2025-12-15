@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cd-app-v17';
+const CACHE_NAME = 'cd-app-v18';
 const urlsToCache = [
     './',
     './index.html',
@@ -6,10 +6,12 @@ const urlsToCache = [
     './css/dashboard.css',
     './css/material.css',
     './css/qm.css',
+    './css/productionplan.css',
     './js/app.js',
     './js/data.js',
     './js/material-data.js',
     './js/qm-data.js',
+    './js/productionplan-data.js',
     './js/watchlist.js',
     './manifest.json',
     './icons/icon-192.svg',
