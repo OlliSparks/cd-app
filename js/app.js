@@ -857,7 +857,7 @@ const App = {
             ok: 'OK'
         };
         return labels[risk] || risk;
-    }
+    },
 
 
     // ===== PRODUKTIONSPLANUNG =====
