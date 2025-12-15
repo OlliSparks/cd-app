@@ -268,53 +268,38 @@
             <div id="view-productionplan" class="view">
                 <div class="pp-header">
                     <h2>Produktionsplanung</h2>
-                    <div class="pp-subtitle">SAP Normalarbeitsplan - Auftragsverfolgung</div>
+                    <div class="pp-subtitle">SAP Normalarbeitsplan - Auftragsverfolgung ueber Arbeitsplaetze</div>
                     <div class="pp-controls">
-                        <select id="pp-order-filter">
-                            <option value="all">Alle Auftraege</option>
-                            <option value="critical">Kritisch</option>
-                            <option value="high">Hoch</option>
-                            <option value="inprogress">In Bearbeitung</option>
-                        </select>
                         <select id="pp-timerange">
-                            <option value="today">Heute</option>
-                            <option value="week" selected>Diese Woche</option>
-                            <option value="2weeks">2 Wochen</option>
+                            <option value="4">4 Stunden</option>
+                            <option value="8" selected>8 Stunden</option>
+                            <option value="12">12 Stunden</option>
+                            <option value="24">24 Stunden</option>
                         </select>
-                    </div>
-                </div>
-
-                <!-- Stats Bar -->
-                <div class="pp-stats">
-                    <div class="pp-stat">
-                        <span class="pp-stat-value" id="pp-stat-total">--</span>
-                        <span class="pp-stat-label">Auftraege gesamt</span>
-                    </div>
-                    <div class="pp-stat active">
-                        <span class="pp-stat-value" id="pp-stat-active">--</span>
-                        <span class="pp-stat-label">In Bearbeitung</span>
-                    </div>
-                    <div class="pp-stat waiting">
-                        <span class="pp-stat-value" id="pp-stat-waiting">--</span>
-                        <span class="pp-stat-label">Wartend</span>
-                    </div>
-                    <div class="pp-stat completed">
-                        <span class="pp-stat-value" id="pp-stat-completed">--</span>
-                        <span class="pp-stat-label">Abgeschlossen</span>
+                        <select id="pp-area-filter">
+                            <option value="all">Alle Bereiche</option>
+                        </select>
                     </div>
                 </div>
 
                 <!-- Legende -->
                 <div class="pp-legend">
-                    <div class="pp-legend-title">Arbeitsstationen:</div>
-                    <div class="pp-legend-items" id="pp-legend-items">
-                        <!-- Wird per JS gefuellt -->
+                    <div class="pp-legend-section">
+                        <div class="pp-legend-title">Arbeitsbereiche:</div>
+                        <div class="pp-legend-items" id="pp-legend-areas"></div>
+                    </div>
+                    <div class="pp-legend-section">
+                        <div class="pp-legend-title">Hinweis:</div>
+                        <div class="pp-legend-hint">Mouseover auf Auftrag zeigt Arbeitsplan mit Verbindungspfeilen. Klick oeffnet Detailansicht.</div>
                     </div>
                 </div>
 
-                <!-- Gantt Chart Container -->
-                <div class="pp-gantt-container" id="pp-gantt-container">
-                    <!-- Wird per JS gefuellt -->
+                <!-- Timeline Container mit SVG Overlay fuer Pfeile -->
+                <div class="pp-timeline-wrapper">
+                    <svg class="pp-arrows-overlay" id="pp-arrows-svg"></svg>
+                    <div class="pp-timeline-container" id="pp-timeline-container">
+                        <!-- Wird per JS gefuellt -->
+                    </div>
                 </div>
             </div>
 
@@ -593,6 +578,7 @@
     <script src="js/material-data.js"></script>
     <script src="js/qm-data.js"></script>
     <script src="js/productionplan-data.js"></script>
+    <script src="js/productionplan-view.js"></script>
     <script src="js/app.js"></script>
     <script src="js/watchlist.js"></script>
     <script>
