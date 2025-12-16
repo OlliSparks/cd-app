@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/material.css">
     <link rel="stylesheet" href="css/qm.css">
     <link rel="stylesheet" href="css/productionplan.css">
+    <link rel="stylesheet" href="css/testlabor.css">
 </head>
 <body>
     <div id="app">
@@ -44,6 +45,7 @@
                 <li><a href="#" data-view="material">Material</a></li>
                 <li><a href="#" data-view="watchlist">Watchlist</a></li>
                 <li><a href="#" data-view="qm">QM-Management</a></li>
+                <li><a href="#" data-view="testlabor">Testlabor</a></li>
                 <li><a href="#" data-view="alerts">Alerts</a></li>
             </ul>
             <div class="nav-search">
@@ -500,6 +502,76 @@
                 </div>
             </div>
 
+            <!-- Testlabor Fahrzeugbeleuchtung View -->
+            <div id="view-testlabor" class="view">
+                <div class="tl-header">
+                    <h2>Testlabor Fahrzeugbeleuchtung</h2>
+                    <div class="tl-subtitle">Freigabepruefung fuer Fahrzeugleuchten</div>
+                </div>
+
+                <!-- Testlabor Stats -->
+                <div class="tl-stats">
+                    <div class="tl-stat active">
+                        <span class="tl-stat-value" id="tl-stat-active">--</span>
+                        <span class="tl-stat-label">Aktive Tests</span>
+                    </div>
+                    <div class="tl-stat pending">
+                        <span class="tl-stat-value" id="tl-stat-pending">--</span>
+                        <span class="tl-stat-label">Wartend</span>
+                    </div>
+                    <div class="tl-stat passed">
+                        <span class="tl-stat-value" id="tl-stat-passed">--</span>
+                        <span class="tl-stat-label">Freigegeben</span>
+                    </div>
+                    <div class="tl-stat failed">
+                        <span class="tl-stat-value" id="tl-stat-failed">--</span>
+                        <span class="tl-stat-label">Abgelehnt</span>
+                    </div>
+                </div>
+
+                <!-- Testplatz Filter -->
+                <div class="tl-filter-bar">
+                    <select id="tl-filter-station">
+                        <option value="all">Alle Testplaetze</option>
+                    </select>
+                    <select id="tl-filter-status">
+                        <option value="all">Alle Status</option>
+                        <option value="testing">In Pruefung</option>
+                        <option value="pending">Wartend</option>
+                        <option value="passed">Freigegeben</option>
+                        <option value="failed">Abgelehnt</option>
+                    </select>
+                    <button class="tl-btn-new" id="btn-new-test">+ Neuer Test</button>
+                </div>
+
+                <!-- Testplaetze Grid -->
+                <div class="tl-stations-grid" id="tl-stations-grid">
+                    <!-- Wird per JS gefuellt -->
+                </div>
+
+                <!-- Aktuelle Tests Tabelle -->
+                <div class="tl-tests-section">
+                    <h3>Aktuelle Pruefungen</h3>
+                    <div class="tl-tests-table-container">
+                        <table class="tl-tests-table" id="tl-tests-table">
+                            <thead>
+                                <tr>
+                                    <th>Pruef-Nr.</th>
+                                    <th>Leuchtentyp</th>
+                                    <th>Hersteller</th>
+                                    <th>Testplatz</th>
+                                    <th>Pruefart</th>
+                                    <th>Start</th>
+                                    <th>Status</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Alerts View -->
             <div id="view-alerts" class="view">
                 <h2>Aktive Meldungen</h2>
@@ -581,6 +653,7 @@
     <script src="js/app.js"></script>
     <script src="js/productionplan-view.js"></script>
     <script src="js/watchlist.js"></script>
+    <script src="js/testlabor-data.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');

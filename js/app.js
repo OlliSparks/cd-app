@@ -102,6 +102,10 @@ const App = {
         document.querySelectorAll('.view').forEach(function(v) {
             v.classList.toggle('active', v.id === 'view-' + view);
         });
+        // Testlabor View initialisieren
+        if (view === 'testlabor' && typeof initTestlaborView === 'function') {
+            initTestlaborView();
+        }
     },
 
     setupAreaTabs() {
